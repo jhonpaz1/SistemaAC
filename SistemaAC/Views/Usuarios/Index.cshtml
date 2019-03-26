@@ -1,4 +1,5 @@
-﻿@model IEnumerable<SistemaAC.Models.ApplicationUser>
+﻿@*@model IEnumerable<SistemaAC.Models.ApplicationUser>*@
+@model IEnumerable<SistemaAC.Models.Usuario>
 @{
     ViewData["Title"] = "Usuarios";
 }
@@ -13,6 +14,9 @@
                 Usuario
             </th>
             <th>
+                Rol
+            </th>
+            <th>
                 Email
             </th>
             <th>
@@ -24,22 +28,25 @@
     <tbody>
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UserName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Email)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PhoneNumber)
-                </td>
-                <td>
-                    <a class="btn btn-success" data-toggle="modal" data-target="#modalEditar" onclick="getUsuario('@item.Id','Usuarios/GetUsuario')">Editar</a> |
-                    <a class="btn btn-info" asp-action="Details" asp-route-id="@item.Id">Detalles</a> |
-                    <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
-                </td>
-            </tr>
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Role)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PhoneNumber)
+            </td>
+            <td>
+                <a class="btn btn-success" data-toggle="modal" data-target="#modalEditar" onclick="getUsuario('@item.Id','Usuarios/GetUsuario')">Editar</a> |
+                <a class="btn btn-info" asp-action="Details" asp-route-id="@item.Id">Detalles</a> |
+                <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
+            </td>
+        </tr>
         }
     </tbody>
 </table>
@@ -58,6 +65,12 @@
                     <div class="form-group">
                         <label for="UserName" class="control-label">Usuario</label>
                         <input readonly name="UserName" id="UserName" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Roles" class="control-label">Roles</label>
+                        <select id="Select" name="Select" class="form-control" onclick="getRoles('usuarios/GetRoles');">
+                            <option value="0">Seleccione un rol</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="Email" class="control-label">Email</label>
