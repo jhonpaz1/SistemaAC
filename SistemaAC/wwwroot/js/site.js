@@ -1,9 +1,9 @@
 ﻿// Write your JavaScript code.
 $('#modalEditar').on('shown.bs.modal', function () {
-    $('#myInput').focus()
-})
+    $('#myInput').focus();
+});
 
-function getUsuario(id, action) {
+function getUsuario(id,action) {
     $.ajax({
         type: "POST",
         url: action,
@@ -11,15 +11,19 @@ function getUsuario(id, action) {
         success: function (response) {
             mostrarUsuario(response);
         }
-    })
-}
 
+    });
+}
 var items;
+var j = 0;
 //Variables globales por cada propiedad del usuario
 var id;
 var userName;
 var email;
 var phoneNumber;
+var role;
+var selectRole;
+
 //Otras variables donde almacenaremos los datos del registro, pero estos datos no serán modificados
 var accessFailedCount;
 var concurrencyStamp;
@@ -33,21 +37,60 @@ var phoneNumberConfirmed;
 var securityStamp;
 var twoFactorEnabled;
 
+
+
 function mostrarUsuario(response) {
     items = response;
+    j = 0;
+    for (var i = 0; i < 3; i++) {
+        var x = document.getElementById('Select');
+        x.remove(i);
+    }
+
     $.each(items, function (index, val) {
-        $('input[name = Id]').val(val.id);
-        $('input[name = UserName]').val(val.userName);
-        $('input[name = Email]').val(val.email);
-        $('input[name = PhoneNumber]').val(val.phoneNumber);
+        $('input[name=Id]').val(val.id);
+        $('input[name=UserName]').val(val.userName);
+        $('input[name=Email]').val(val.email);
+        $('input[name=PhoneNumber]').val(val.phoneNumber);
+        document.getElementById('Select').options[0] = new Option(val.role, val.roleId);
+
+        //Mostrar los detalles del usuario
+        $("#dEmail").text(val.email);
+        $("#dUserName").text(val.userName);
+        $("#dPhoneNumber").text(val.phoneNumber);
+        $("#dRole").text(val.role);
+
+        //Mostrar los datos del usuario que seo eliminar
+        $("#eUsuario").text(val.email);
+        $('input[name=EIdUsuario]').val(val.id);
+    });
+}
+
+
+function getRoles(action) {
+    $.ajax({
+        type: "POST",
+        url: action,
+        data: {},
+        success: function (response) {
+            if (j==0){
+                for (var i = 0; i < response.length; i++){
+                    document.getElementById('Select').options[i] = new Option(response[i].text, response[i].value);
+                }
+                j = 1;
+            }
+        }
     });
 }
 
 function editarUsuario(action) {
-    //Obtenemos los datos del imput respectivo del formulario
+    //Obtenemos los datos del input respectivo del formulario
     id = $('input[name=Id]')[0].value;
     email = $('input[name=Email]')[0].value;
     phoneNumber = $('input[name=PhoneNumber]')[0].value;
+    role = document.getElementById('Select');
+    selectRole = role.options[role.selectedIndex].text;
+
 
     $.each(items, function (index, val) {
         accessFailedCount = val.accessFailedCount;
@@ -70,7 +113,7 @@ function editarUsuario(action) {
             id, userName, email, phoneNumber, accessFailedCount,
             concurrencyStamp, emailConfirmed, lockoutEnabled, lockoutEnd,
             normalizedEmail, normalizedUserName, passwordHash, phoneNumberConfirmed,
-            securityStamp, twoFactorEnabled
+            securityStamp, twoFactorEnabled,selectRole
         },
         success: function (response) {
             if (response == "Save") {
@@ -78,6 +121,29 @@ function editarUsuario(action) {
             }
             else {
                 alert("No se puede editar los datos del usuario");
+            }
+        }
+    });
+
+
+}
+
+function ocultarDetalleUsuario() {
+    $("#modalDetalle").modal("hide");
+}
+
+function eliminarUsuario(action) {
+    var id = $('input[name = EIdUsuario]')[0].value;
+    $.ajax({
+        type: "POST",
+        url: action,
+        data: { id },
+        success: function (response) {
+            if (response == "Delete") {
+                window.location.href = "Usuarios";
+            }
+            else {
+                alert("No se puede eliminar el registro");
             }
         }
     });

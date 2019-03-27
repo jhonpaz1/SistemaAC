@@ -10,7 +10,6 @@ namespace SistemaAC.Models
     public class UsuarioRole
     {
         public List<SelectListItem> usuarioRoles;
-
         public UsuarioRole()
         {
             usuarioRoles = new List<SelectListItem>();
@@ -29,8 +28,9 @@ namespace SistemaAC.Models
                 usuarioRoles.Add(new SelectListItem()
                 {
                     Value = "null",
-                    Text = "No role"
+                    Text = "No Role"
                 });
+
             }
             else
             {
@@ -41,13 +41,31 @@ namespace SistemaAC.Models
                     usuarioRoles.Add(new SelectListItem()
                     {
                         Value = Data.Id,
-                        Text = Data.Name
+                        Text = Data.Name,
                     });
                 }
-            }
 
+
+            }
+            //Ahora retornamos el objeto usuarioRoles
             return usuarioRoles;
+        }
+
+        public List<SelectListItem> Roles(RoleManager<IdentityRole> roleManager)
+        {
+            var roles = roleManager.Roles.ToList();
+            foreach (var Data in roles)
+            {
+                usuarioRoles.Add(new SelectListItem() {
+                    Value = Data.Id,
+                    Text = Data.Name
+                });
+
+             }
+            return usuarioRoles;
+        }
+
+
 
         }
     }
-}
