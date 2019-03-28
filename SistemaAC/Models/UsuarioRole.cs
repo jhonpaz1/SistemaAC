@@ -44,8 +44,6 @@ namespace SistemaAC.Models
                         Text = Data.Name,
                     });
                 }
-
-
             }
             //Ahora retornamos el objeto usuarioRoles
             return usuarioRoles;

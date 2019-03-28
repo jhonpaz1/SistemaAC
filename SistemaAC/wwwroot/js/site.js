@@ -37,8 +37,6 @@ var phoneNumberConfirmed;
 var securityStamp;
 var twoFactorEnabled;
 
-
-
 function mostrarUsuario(response) {
     items = response;
     j = 0;
@@ -66,7 +64,6 @@ function mostrarUsuario(response) {
     });
 }
 
-
 function getRoles(action) {
     $.ajax({
         type: "POST",
@@ -76,6 +73,7 @@ function getRoles(action) {
             if (j==0){
                 for (var i = 0; i < response.length; i++){
                     document.getElementById('Select').options[i] = new Option(response[i].text, response[i].value);
+                    document.getElementById('SelectNuevo').options[i] = new Option(response[i].text, response[i].value);
                 }
                 j = 1;
             }
@@ -90,7 +88,6 @@ function editarUsuario(action) {
     phoneNumber = $('input[name=PhoneNumber]')[0].value;
     role = document.getElementById('Select');
     selectRole = role.options[role.selectedIndex].text;
-
 
     $.each(items, function (index, val) {
         accessFailedCount = val.accessFailedCount;
@@ -124,8 +121,6 @@ function editarUsuario(action) {
             }
         }
     });
-
-
 }
 
 function ocultarDetalleUsuario() {
@@ -147,4 +142,42 @@ function eliminarUsuario(action) {
             }
         }
     });
+}
+
+function crearUsuario() {
+    //Obtener los datos en los inputs respectivos
+    email = $('input[name=EmailNuevo]')[0].value;
+    phoneNuevo = $('input[name=PhoneNumberNuevo]')[0].value;
+    passwordHash = $('input[name=PasswordHashNuevo]')[0].value;
+    role = document.getElementById('SelectNuevo');
+    selectRole = role.options[role.selectedIndex].text;
+
+    //Ahora validamos que los datos del usuario no estén vacíos
+    if (email == "") {
+        $('#EmailNuevo').focus();
+        alert("Ingrese el emial del usuario");
+    }
+    else {
+        if (passwordHash == "") {
+            $('#EmailNuevo').focus();
+            alert("Ingrese el password del usuario");
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                url: action, 
+                data: {
+                    email, phoneNumber, passwordHash, selectRole
+                },
+                success: function (response) {
+                    if (response == "Save") {
+                        window.location.href = "Usuarios";
+                    }
+                    else {
+                        $('#mensajenuevo').html("No se puede gardar el usuario. <br/>Seleccione un rol. <br/> Ingrese un email correcto. <br/> El password debe tener de 6-100 caracteres, al menos un cararcter especial, una letra mayúscula y un número");
+                    }
+                }
+            });
+        }
+    }
 }
